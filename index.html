@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Secret Place</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #ff8fa3;
+            --dark-pink: #ff4d6d;
+            --glass: rgba(255, 255, 255, 0.25);
+            --text: #590d22;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #ffb3c1, #ff758f);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #password-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ff758f;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: 0.5s;
+        }
+
+        input {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            margin-top: 10px;
+            text-align: center;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            padding: 30px;
+            width: 85%;
+            max-width: 380px;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        #menu-view, #content-view, #celebration-view { display: none; }
+
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .nav-btn { background: white; color: var(--dark-pink); border: none; padding: 12px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+
+        .counter-num { font-size: 1.8rem; font-weight: bold; color: var(--dark-pink); }
+
+        .proposal-area {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .choice-btn {
+            padding: 12px 45px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #yesBtn {
+            background: var(--dark-pink);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            z-index: 11;
+        }
+
+        #noBtn {
+            background: white;
+            color: var(--dark-pink);
+            font-size: 0.8rem;
+            padding: 8px 25px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid var(--text);
+            color: var(--text);
+            padding: 8px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .signature {
+            margin-top: 25px;
+            font-size: 0.75rem;
+            color: var(--text);
+            font-style: italic;
+            opacity: 0.8;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .big-heart {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            animation: growAndFade 2.5s ease-out forwards;
+        }
+
+        @keyframes growAndFade {
+            0% { transform: scale(0.2) translateY(0); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: scale(3.5) translateY(-250px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="password-overlay">
+        <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
+        <h2>Enter our Special Word</h2>
+        <p>(Hint: The month we met)</p>
+        <input type="text" id="passInput" placeholder="Type here...">
+        <button onclick="checkPass()" style="margin-top:20px; background:white; color:#ff4d6d; border:none; padding:12px 30px; border-radius:30px; font-weight:bold; cursor:pointer;">Unlock Love</button>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="15.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card" id="mainCard" style="display:none;">
+        <div id="menu-view" style="display:block;">
+            <h1 style="margin:0; color:var(--text)">Hello Beautiful ❤️</h1>
+            <div class="nav-grid">
+                <button class="nav-btn" onclick="openPage('memory')">Memories</button>
+                <button class="nav-btn" onclick="openPage('counter')">Our Days</button>
+                <button class="nav-btn" onclick="openPage('letter')">Letter</button>
+                <button class="nav-btn" onclick="openPage('future')">Future</button>
+            </div>
+            
+            <div class="proposal-area">
+                <p style="margin:0; font-size: 0.95rem; color: var(--text);">Will you be my Valentine?</p>
+                <button class="choice-btn" id="yesBtn" onclick="celebrate()">YES! ❤️</button>
+                <button class="choice-btn" id="noBtn" onmouseover="runAway()" onclick="runAway()">No</button>
+            </div>
+            <div class="signature">Made with love by your Favorite(Unknown)❤️</div>
+        </div>
+
+        <div id="content-view">
+            <div id="page-text" style="color: var(--text); padding: 20px; background: rgba(255,255,255,0.2); border-radius: 20px;"></div>
+            <button class="back-btn" onclick="goHome()">← Back</button>
+            <div class="signature">Forever Yours ❤️</div>
+        </div>
+
+        <div id="celebration-view">
+            <h1 style="color: var(--dark-pink); font-size: 2.5rem; margin:0;">YAY! ❤️</h1>
+            <p style="color: var(--text);">I love you forever! Best day ever. I wish for us to stay together forever, to grow together, and to live our lives as one. I really love you with all my heart, my Cutie Baby!</p>
+            <button class="back-btn" onclick="goHome()">← Back</button>
+            <div class="signature">Our Story Starts Here ❤️</div>
+        </div>
+    </div>
+
+    <script>
+        const startDate = new Date("2022-12-25"); 
+
+        function checkPass() {
+            const input = document.getElementById('passInput').value.toLowerCase();
+            if(input === "december") { 
+                document.getElementById('password-overlay').style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById('password-overlay').style.display = "none";
+                    document.getElementById('mainCard').style.display = "block";
+                    const music = document.getElementById('bgMusic');
+                    music.play().catch(e => console.log("Music needs interaction first")); 
+                }, 500);
+            } else {
+                alert("Incorrect! Hint: It's the month we met.");
+            }
+        }
+
+        function updateCounter() {
+            const now = new Date();
+            const diff = now - startDate;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            return `<div class="counter-num">${days} Days</div> <span style="font-size:0.9rem;">Since we started our beautiful journey</span>`;
+        }
+
+        const pages = {
+            memory: "Remember when we first met? That was the best day of my life. Seeing you for the first time was the most incredible moment ever. I love you so much, my love, and I will never ever leave you in this world or the next. 🥰",
+            counter: updateCounter(),
+            letter: "You are my best friend and my greatest adventure. I love you more than words can say!",
+            future: "I can't wait for all the trips, laughs, and memories we have yet to make. ✈️💍"
+        };
+
+        function openPage(id) {
+            hideAll();
+            document.getElementById('content-view').style.display = 'block';
+            document.getElementById('page-text').innerHTML = (id === 'counter') ? updateCounter() : pages[id];
+            for(let i=0; i<5; i++) createHeart();
+        }
+
+        function goHome() { hideAll(); document.getElementById('menu-view').style.display = 'block'; }
+        function hideAll() { document.getElementById('menu-view').style.display = 'none'; document.getElementById('content-view').style.display = 'none'; document.getElementById('celebration-view').style.display = 'none'; }
+
+        function runAway() {
+            const btn = document.getElementById('noBtn');
+            btn.style.position = 'fixed';
+            btn.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            btn.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+        }
+
+        function celebrate() {
+            hideAll();
+            document.getElementById('celebration-view').style.display = 'block';
+            const burst = setInterval(createHeart, 150);
+            setTimeout(() => clearInterval(burst), 4000);
+        }
+
+        function createHeart() {
+            const h = document.createElement('div');
+            h.className = 'big-heart';
+            h.innerHTML = '❤️';
+            h.style.left = Math.random() * 90 + 'vw';
+            h.style.top = (Math.random() * 40 + 60) + 'vh';
+            h.style.fontSize = (Math.random() * 60 + 40) + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 2500);
+        }
+        setInterval(createHeart, 800);
+    </script>
+</body>
+</html>
